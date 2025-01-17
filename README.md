@@ -8,79 +8,77 @@ Scholarly est une application web de gestion scolaire (backoffice) permettant au
 ## Gestion des Étudiants : 
 
 ## Opérations CRUD
-Ajout de nouveaux étudiants avec validation des données
-Modification des informations existantes
-Suppression avec confirmation
-Consultation détaillée des profils
-## Informations Personnelles
-Consultation des informations personnelles (nom, prénom, date de naissance, email, téléphone, classe..)
+-Ajout de nouveaux étudiants avec validation des données
+-Modification des informations existantes
+-Suppression avec confirmation
+-Consultation détaillée des profils
 ## Export et Rapports
-Export au format CSV des listes d'étudiants
-Génération de PDF pour les dossiers individuels
-Rapports statistiques par classe/niveau
+-Export au format CSV des listes d'étudiants
+-Génération de PDF pour les dossiers individuels
+-Rapports statistiques par classe/niveau
 ## Fonctionnalités Avancées
-Tri/ Recherche multi-critères
-Pagination des résultats
+-Tri/ Recherche multi-critères
+-Pagination des résultats
 
 
 
 ## Gestion des Professeurs :
 ## Opérations CRUD
 ## Création de profils enseignants
-Ajout de nouveaux professeurs avec validation des données
-Modification des informations existantes
-Suppression avec confirmation
-Consultation détaillée des profils
+-Ajout de nouveaux professeurs avec validation des données
+-Modification des informations existantes
+-Suppression avec confirmation
+-Consultation détaillée des profils
 ## Export et Rapports
-Export CSV des listes de professeurs
-Génération de PDF pour les dossiers individuels
-Rapports d'activité individuels
+-Export CSV des listes de professeurs
+-Génération de PDF pour les dossiers individuels
+-Rapports d'activité individuels
 ## Fonctionnalités Avancées
-Tri/ Recherche multi-critères
-Pagination des résultats
+-Tri/ Recherche multi-critères
+-Pagination des résultats
 
 
 ## Gestion des Cours :
 ## Opérations CRUD
-Ajout de nouveaux cours avec validation des données
-Modification des informations existantes
-Suppression avec confirmation
-Consultation détaillée des profils
+-Ajout de nouveaux cours avec validation des données
+-Modification des informations existantes
+-Suppression avec confirmation
+-Consultation détaillée des profils
 ## Export 
 Export CSV des listes de cours
 Génération de PDF pour les dossiers individuels
 ## Fonctionnalités Avancées
-Tri/ Recherche  multi-critères
-Pagination des résultats
+-Tri/ Recherche  multi-critères
+-Pagination des résultats
 
 
 ## Gestion des Examens :
 ## Opérations CRUD
-Ajout de nouveaux examens avec validation des données
-Modification des informations existantes
-Suppression avec confirmation
-Consultation détaillée des profils
+-Ajout de nouveaux examens avec validation des données
+-Modification des informations existantes
+-Suppression avec confirmation
+-Consultation détaillée des profils
 ## Export 
-Export CSV des listes d'examen
-Génération de PDF pour les dossiers individuels
+-Export CSV des listes d'examen
+-Génération de PDF pour les dossiers individuels
 ## Fonctionnalités Avancées
-Tri/ Recherche  multi-critères
-Pagination des résultats
+-Tri/ Recherche  multi-critères
+-Pagination des résultats
 
 
 ## Gestion des Notes :
 
 ## Opérations CRUD
-Ajout de nouveaux notes avec validation des données
-Modification des informations existantes
-Suppression avec confirmation
-Consultation détaillée des profils
+-Ajout de nouveaux notes avec validation des données
+-Modification des informations existantes
+-Suppression avec confirmation
+-Consultation détaillée des profils
 ## Export 
-Export CSV des listes de note
-Génération de PDF pour les dossiers individuels
+-Export CSV des listes de note
+-Génération de PDF pour les dossiers individuels
 ## Fonctionnalités Avancées
-Tri/ Recherche  multi-critères
-Pagination des résultats
+-Tri/ Recherche  multi-critères
+-Pagination des résultats
 
 
 ##  Technologies Utilisées
