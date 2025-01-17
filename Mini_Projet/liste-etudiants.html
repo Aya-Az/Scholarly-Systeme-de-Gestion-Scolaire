@@ -1,0 +1,267 @@
+<!-- Liste Etudiant -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des Étudiants</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text" onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+  <section id="content">
+    <main>
+      <h1>Liste des étudiants</h1>
+      <section id="content-etudiants">
+        <div class="head-title">
+          <div class="container">
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-etudiants.html">Liste des étudiants</a></li>
+            </ul>
+          </div>
+          <div class="container-button ">
+            <button id="export-csv" class="export-button" onclick="exportToCSV()">Exporter en CSV</button>
+            <button id="add-button" class="add-button" onclick="addStudent()">Ajouter</button>
+          </div>
+        </div>
+      </section>
+      <br>
+
+      <form action="#">
+        <div class="form-input">
+          <input type="search" id="searchInput" placeholder="Rechercher..." oninput="searchStudents()">
+          <button type="submit" class="search-btn">
+            <i class="fas fa-search"></i>
+          </button><br>
+          <div class="sort-selector">
+            <select id="sortSelect" onchange="sortTable()">
+              <option value="">Trier par :</option>
+              <option value="name">Nom</option>
+              <option value="prenom">Prénom</option>
+              <option value="genre">Genre</option>
+              <option value="classe">Classe</option>
+              <option value="email">Email</option>
+              <option value="phone">N° de Téléphone</option>
+            </select>
+          </div>
+        </div>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Date de naissance</th>
+            <th>Genre</th>
+            <th>Classe</th>
+            <th>Numéro de téléphone</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="studentTable">
+          <!-- Les étudiants seront ajoutés ici dynamiquement -->
+        </tbody>
+      </table>
+
+      <div id="pagination">
+        <button id="prevBtn" onclick="prevPage()">Précédent</button>
+        <span id="pageNumber">Page 1</span>
+        <button id="nextBtn" onclick="nextPage()">Suivant</button>
+      </div>
+
+    </main>
+  </section>
+  <script src="script.js"></script>
+  <script>
+    const studentsPerPage = 5; // Nombre d'étudiants par page
+    let currentPage = 1; // Page actuelle
+
+    // Récupérer les étudiants directement à partir du localStorage
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+    console.log("Étudiants récupérés :", students); // Debugging pour vérifier la récupération
+
+    let filteredStudents = [...students]; // Liste filtrée pour affichage (copie)
+
+    function addStudent() {
+      window.location.href = 'ajouter-etudiant.html';
+    }
+
+
+    function renderStudents() {
+      const studentTable = document.getElementById('studentTable');
+      studentTable.innerHTML = ''; // Vider la table avant de la remplir
+
+      // Calculer les étudiants à afficher pour la page actuelle
+      const start = (currentPage - 1) * studentsPerPage;
+      const end = start + studentsPerPage;
+      const currentStudents = filteredStudents.slice(start, end);
+
+      // Afficher les étudiants de la page actuelle
+      // Dans la fonction renderStudents(), modifiez la partie qui génère les boutons d'action
+      currentStudents.forEach((student, index) => {
+        // Calculer l'index réel dans le tableau complet
+        const realIndex = start + index;  // start est déjà calculé comme (currentPage - 1) * studentsPerPage
+        const row = document.createElement('tr');
+        row.innerHTML = `
+    <td>${student.name}</td>
+    <td>${student.prenom}</td>
+    <td>${student.date}</td>
+    <td>${student.genre}</td>
+    <td>${student.classe}</td>
+    <td>${student.phone}</td>
+    <td>${student.email}</td>
+    <td>
+      <button onclick="window.location.href='modifier-etudiant.html?id=${realIndex}'">Modifier</button>
+      <button onclick="deleteStudent(${realIndex})">Supprimer</button>
+      <button onclick="window.location.href='voir-details-etd.html?id=${realIndex}'">Voir Détails</button>
+    </td>
+  `;
+        studentTable.appendChild(row);
+      });
+
+      // Mettre à jour le numéro de page
+      document.getElementById('pageNumber').innerText = `Page ${currentPage}`;
+
+      // Activer/désactiver les boutons Précédent/Suivant
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage * studentsPerPage >= filteredStudents.length;
+    }
+
+    // Fonction pour aller à la page suivante
+    function nextPage() {
+      currentPage++;
+      renderStudents();
+    }
+
+    // Fonction pour aller à la page précédente
+    function prevPage() {
+      currentPage--;
+      renderStudents();
+    }
+
+    function sortTable() {
+      const sortBy = document.getElementById("sortSelect").value; // Récupère la valeur sélectionnée dans le select
+      filteredStudents.sort((a, b) => {
+        if (a[sortBy] < b[sortBy]) return -1;
+        if (a[sortBy] > b[sortBy]) return 1;
+        return 0;
+      });
+      renderStudents();// Re-render les etudiants après le tri
+    }
+
+    // Fonction de recherche
+    function searchStudents() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      filteredStudents = students.filter(student => {
+        return (
+          student.name.toLowerCase().includes(query) ||
+          student.prenom.toLowerCase().includes(query) ||
+          student.classe.toLowerCase().includes(query) ||
+          student.email.toLowerCase().includes(query)
+        );
+      });
+      renderStudents(); // Afficher la liste mise à jour
+    }
+
+    // Fonction pour supprimer un étudiant
+    function deleteStudent(index) {
+      // Confirmer la suppression
+      if (confirm("Êtes-vous sûr de vouloir supprimer cet étudiant ?")) {
+        // Supprimer l'étudiant du tableau principal
+        students.splice(index, 1);
+
+        // Mettre à jour le localStorage
+        localStorage.setItem('students', JSON.stringify(students));
+
+        // Mettre à jour la liste filtrée
+        filteredStudents = [...students];
+
+        // Réafficher la liste
+        renderStudents();
+
+        alert("Étudiant supprimé avec succès !");
+      }
+    }
+
+    // Fonction d'exportation en CSV
+    function exportToCSV() {
+      let csvContent = "Nom,Prénom,Date de naissance,Genre,Téléphone,Email\n"; // CSV header
+
+      // Loop through students to create each row in the CSV
+      students.forEach(student => {
+        csvContent += `${student.name},${student.prenom},${student.date},${student.genre},${student.classe},${student.phone},${student.email}\n`;
+      });
+
+      // Create a link for downloading the CSV file
+      const link = document.createElement('a');
+      link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+      link.download = 'etudiants.csv'; // Set the file name for the CSV
+      link.click(); // Simulate a click to start the download
+    }
+
+    // Appeler la fonction pour afficher les étudiants
+    renderStudents();
+  </script>
+</body>
+
+</html>

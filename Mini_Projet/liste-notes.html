@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Notes</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Mon CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <section id="sidebar">
+        <a href="#" class="logo">
+            <i class="fas fa-school"></i>
+            <span class="text">Scholarly</span>
+        </a>
+        
+    <ul class="side-menu top">
+        <li class="active">
+          <a href="dashboard.html">
+            <i class="fas fa-tachometer-alt"></i>
+            <span class="text">Tableau de Bord</span>
+          </a>
+        </li>
+        <li>
+          <a href="liste-etudiants.html">
+            <i class="fas fa-user-graduate"></i>
+            <span class="text">Étudiants</span>
+          </a>
+        </li>
+        <li>
+          <a href="liste-professeurs.html">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <span class="text">Professeurs</span>
+          </a>
+        </li>
+        <li>
+          <a href="liste-cours.html">
+            <i class="fas fa-book-open"></i>
+            <span class="text">Cours</span>
+          </a>
+        </li>
+        <li>
+          <a href="liste-examens.html">
+            <i class="fas fa-pen"></i>
+            <span class="text">Examens</span>
+          </a>
+        </li>
+        <li>
+          <a href="liste-notes.html">
+            <i class="fas fa-graduation-cap"></i>
+            <span class="text">Notes</span>
+          </a>
+        </li>
+      </ul>
+        <ul class="side-menu">
+            <li>
+              <a href="login.html" class="logout">
+                <i class="fas fa-sign-out-alt"></i>
+                <span class="text"  onclick="logout()">Déconnexion</span>
+              </a>
+            </li>
+          </ul>
+    </section>
+
+    <section id="content">
+        <main>
+            <h1>Liste des Notes</h1>
+            <section id="content-notes">
+                <div class="head-title">
+                    <div class="container">
+                        <ul class="liste">
+                            <li><a class="active" href="dashboard.html">Accueil</a></li>
+                            <li><i class="fas fa-chevron-right"></i></li>
+                            <li><a href="liste-notes.html">Liste des Notes</a></li>
+                        </ul>
+                    </div>
+                    <div class="container-button ">
+                        <button id="export-csv" class="export-button" onclick="exportToCSV() ">Exporter en CSV</button>
+                        <button id="add-button" class="add-button" onclick="addNote()">Ajouter</button>
+                    </div>
+                </div>
+            </section>
+            <br>
+
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="searchInput" placeholder="Rechercher..." oninput="searchNotes()">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button><br>
+                    <div class="sort-selector">
+                        <select id="sortSelect" onchange="sortTable()">
+                            <option value="">Trier par :</option>
+                            <option value="studentIndex">Étudiant</option>
+                            <option value="exam">Examen</option>
+                            <option value="coefficient">Coefficient</option>
+                            <option value="grade">Note</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Étudiant</th>
+                        <th>Examen</th>
+                        <th>Coefficient</th>
+                        <th>Note</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="gradesTable">
+                    <!-- Les notes seront ajoutées ici dynamiquement -->
+                </tbody>
+            </table>
+
+            <div id="pagination">
+                <button id="prevBtn" onclick="prevPage()">Précédent</button>
+                <span id="pageNumber">Page 1</span>
+                <button id="nextBtn" onclick="nextPage()">Suivant</button>
+            </div>
+
+        </main>
+    </section>
+    <script src="script.js"></script>
+    <script>
+        const gradesPerPage = 5; // Nombre de notes par page
+        let currentPage = 1; // Page actuelle
+    
+        // Récupérer les notes et les étudiants depuis le localStorage
+        const grades = JSON.parse(localStorage.getItem('grades')) || [];
+        const students = JSON.parse(localStorage.getItem('students')) || []; // Récupérer les étudiants
+        console.log("Notes récupérées :", grades); // Debugging pour vérifier la récupération
+        let filteredGrades = [...grades]; // Liste filtrée pour affichage
+
+        function addNote() {
+            window.location.href = 'ajouter-note.html';
+        }
+    
+        // Fonction pour obtenir le nom de l'étudiant à partir de son index
+        function getStudentNameByIndex(studentIndex) {
+            console.log("Recherche de l'étudiant à l'index : " + studentIndex); // Log de débogage
+    
+            // Vérification si l'index est valide
+            if (studentIndex < 0 || studentIndex >= students.length) {
+                console.log("Index invalide ou hors limites : " + studentIndex);
+                return 'Index non valide';
+            }
+    
+            const student = students[studentIndex];
+            console.log("Étudiant trouvé : " + student.name + " " + student.prenom); // Log si l'étudiant est trouvé
+    
+            // Retourner le nom complet de l'étudiant
+            return `${student.name} ${student.prenom}`;
+        }
+    
+        //Fonction pour afficher les notes dans le tableau
+        function renderGrades() {
+            const gradesTable = document.getElementById('gradesTable');
+            gradesTable.innerHTML = '';
+    
+            const start = (currentPage - 1) * gradesPerPage;
+            const end = start + gradesPerPage;
+            const currentGrades = filteredGrades.slice(start, end);
+    
+            currentGrades.forEach((grade, index) => {
+             // Calculer l'index réel dans le tableau complet
+                const realIndex = start + index; 
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${getStudentNameByIndex(grade.studentIndex)}</td>
+                    <td>${grade.exam}</td>
+                     <td>${grade.coefficient}</td>
+                    <td>${grade.grade}</td>
+                    <td>
+                        <button onclick="window.location.href='modifier-note.html?id=${realIndex}'">Modifier</button>
+                        <button onclick="deleteGrade(${realIndex})">Supprimer</button>
+                         <button onclick="window.location.href='voir-details-notes.html?id=${realIndex}'">Voir Détails</button>
+                    </td>
+                `;
+                gradesTable.appendChild(row);
+            });
+    
+            document.getElementById('pageNumber').innerText = `Page ${currentPage}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage * gradesPerPage >= filteredGrades.length;
+        }
+    
+        // Fonction de pagination
+        function nextPage() {
+            currentPage++;
+            renderGrades();
+        }
+    
+        function prevPage() {
+            currentPage--;
+            renderGrades();
+        }
+    
+        // Fonction pour supprimer une note
+        function deleteGrade(index) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cette note ?")) {
+                grades.splice(index, 1);
+                localStorage.setItem('grades', JSON.stringify(grades));
+                renderGrades();
+                alert("Note supprimé avec succès !");
+            }
+        }
+
+        function sortTable() {
+            const sortBy = document.getElementById("sortSelect").value;
+            filteredGrades.sort((a, b) => {
+                if (a[sortBy] < b[sortBy]) return -1;
+                if (a[sortBy] > b[sortBy]) return 1;
+                return 0;
+            });
+            renderGrades();
+        }
+    
+        // Recherche des notes
+        function searchNotes() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            filteredGrades = grades.filter(grade => {
+                return (
+                    getStudentNameByIndex(grade.studentIndex).toLowerCase().includes(query) ||
+                    grade.exam.toLowerCase().includes(query) ||
+                    grade.coefficient.toString().includes(query) ||
+                    grade.grade.toString().includes(query)
+                );
+            });
+            renderGrades();
+        }
+    
+        // Exporter en CSV
+        function exportToCSV() {
+        let csvContent = "Étudiant,Examen,Note\n"; 
+
+        filteredGrades.forEach(grade => {
+            const studentName = getStudentNameByIndex(grade.studentIndex) || 'Inconnu';
+            csvContent += `${studentName},${grade.exam},${grade.grade},${grade.coefficient}\n`;
+        });
+
+        const link = document.createElement('a');
+        link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+        link.download = 'notes.csv'; 
+        link.click(); 
+    }
+        
+        renderGrades(); // Afficher les notes au chargement
+    </script>
+    
+</body>
+</html>
+
+

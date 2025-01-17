@@ -1,0 +1,744 @@
+/* ---Base Styles--- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+a {
+  text-decoration: none;
+}
+li {
+  list-style: none;
+}
+body {
+  background: #eee;
+}
+
+/* ---Sidebar Styles--- */
+#sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 194px;
+  height: 100%;
+  background: #F9F9F9;
+  z-index: 2000;
+  font-family: 'Lato', sans-serif;
+  transition: .3s ease;
+}
+#sidebar .logo {
+  font-size: 1.2rem; 
+  font-weight: 700;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  color: #333;
+  position: sticky;
+  top: 0;
+	left: 0px;
+  background: #F9F9F9;
+} 
+#sidebar .logo .text {
+  margin-left: 10px;
+}
+#sidebar .logo .fas {
+	min-width: 60px;
+	display: flex;
+	justify-content: center;
+}
+#sidebar ul.side-menu {
+  list-style: none;
+  padding: 0;
+}
+#sidebar ul.side-menu li {
+  padding: 15px 20px;
+}
+#sidebar ul.side-menu li a {
+  display: flex;
+  align-items: center;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  background-color: #f7f7f7;
+}
+#sidebar ul.side-menu li a i {
+  font-size: 1.5rem;
+}
+#sidebar ul.side-menu li a .text {
+  margin-left: 10px;
+}
+#sidebar .side-menu li a:hover {
+  color:  #3C91E6;
+}
+#sidebar .side-menu li a.logout:hover {
+  color: #DB504A;
+}
+
+/*   ---Main Content---  */
+#content {
+  position: relative;
+  width: calc(100% - 60px); 
+  left: 280px;
+  transition: .3s ease;
+}
+#content main {
+  width: 100%;
+  padding: 36px 24px;
+  font-family: 'Poppins', sans-serif;
+  overflow-y: auto;
+}
+ #content main .head-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  grid-gap: 16px;
+  flex-wrap: wrap;
+} 
+#content main .head-title .btn {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 36px;
+  background: #3C91E6;
+  color: #F9F9F9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-gap: 10px;
+  font-weight: 500;
+}
+#content main .box-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-gap: 14px;
+  margin-top: 36px;
+}
+
+#content main .box-info li {
+  padding: 14px;
+  background: #F9F9F9;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  grid-gap: 14px;
+}
+
+#content main .box-info li .text h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #342E37;
+}
+
+#content main .box-info li .text p {
+  color: #342E37;
+}
+
+
+/*  ---Formulaire--- */
+.form-input {
+  display: flex;
+  align-items: center;
+  height: 36px;
+}
+
+.form-input input {
+  flex-grow: 1;
+  padding: 0 16px;
+  height: 100%;
+  border: none;
+  background: rgba(255, 255, 255, 0.653);
+  border-radius: 36px 0 0 36px;
+  outline: none;
+  width: 39px;
+  color: #342E37;
+}
+
+.form-input button {
+  grid-gap: 10px;
+  width: 68px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #3C91E6;
+  color: #f9f9f9;
+  font-size: 26px;
+  border: none;
+  outline: none;
+  border-radius: 0 36px 36px 0;
+  cursor: pointer;
+}
+/* Styles pour les conteneurs de formulaire */
+.form-container {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  margin-top: 30px;
+}
+/* Styles pour les champs du formulaire */
+.form-container label {
+  display: block;
+  margin-bottom: 10px;
+  color: #333;
+}
+.form-container input,.form-container select {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+/* Styles pour les boutons */
+.form-container button {
+  padding: 10px 20px;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.sort-selector {
+  position: relative;
+  width: 180px;
+  margin-left: 10px;
+}
+.sort-selector select {
+  width: 100%;
+  padding: 8px 10px;
+  background-color: #f7f7f7;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  font-size: 12px;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+.sort-selector select:hover {
+  border-color: #888;
+}
+/* Styles communs pour les titres principaux */
+h1 {
+  font-size: 1.5rem;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Styles pour les éléments de liste dans le titre */
+.liste {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+}
+
+.liste li {
+  margin-right: 10px;
+}
+
+.liste a {
+  text-decoration: none;
+  color: #3498db;
+}
+
+
+/*  ---Statistiques--- */
+.canvas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px; /* Espacement entre les cartes */
+  margin-top: 24px;
+  width: 100%;
+  color: #342E37;
+}
+
+.canvas .stat {
+  border-radius: 20px;
+  background: #F9F9F9;
+  padding: 24px;
+  overflow-x: hidden;
+  flex-grow: 1;
+  flex-basis: calc(50% - 24px); /* Deux éléments par ligne avec espacement */
+  box-sizing: border-box;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column; /* Pour aligner les contenus verticalement */
+  align-items: center; /* Centrer les graphiques */
+}
+
+.canvas .stat .head {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  text-align: center; /* Centre le texte de l'entête */
+}
+
+.stats-title {
+  margin: 0; /* Supprime les marges superflues */
+}
+
+.canvas canvas {
+  margin-top: 16px;
+  max-width: 100%; /* Empêche les débordements */
+  height: auto;
+  max-height: 250px; /* Limite la hauteur */
+  border-radius: 10px;
+  border: 1px solid #eee;
+  background: #ffffff;
+}
+
+
+/*  ---Table Styles---  */
+table {
+  width: 100%;  /* Définit la largeur du tableau */
+  max-width: 100%;  /* Empêche le tableau de dépasser la largeur de son conteneur */
+  border-collapse: collapse;
+  margin-top: 20px;
+  font-family: Arial, sans-serif;
+  display: block;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  table-layout: fixed;  /* Force une disposition fixe pour les cellules */
+}
+
+/* Styles pour les cellules */
+th, td {
+  padding: 10px;  /* Ajuste l'espacement pour un rendu similaire */
+  text-align: center;
+  border: 1px solid #ddd;
+  font-size: 14px;  /* Taille de texte plus claire */
+  width: 25%;  /* Fixe la largeur des cellules pour une disposition uniforme */
+}
+
+/* Styles spécifiques pour l'en-tête */
+th {
+  background-color: #3498db;
+  color: white;
+  font-weight: bold;
+}
+
+/* Styles pour les données des cellules */
+td {
+  background-color: #f9f9f9;
+  white-space: nowrap;  /* Empêche les boutons de passer à la ligne */
+}
+
+/* Styles pour les boutons dans les cellules */
+td button {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: #92c4f7;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.3s ease;
+  margin-right: 5px;
+}
+
+td button:last-child {
+  margin-right: 0;
+}
+
+td button:hover {
+  background-color: #79bafa;
+}
+
+
+/*  ----Button Styles---- */
+.button-container {
+  display: flex;
+  gap: 10px;/* Espacement entre les boutons */
+  justify-content: center;/* Centrer les boutons horizontalement */
+  align-items: center;/* Aligner verticalement */
+}
+/* Style pour le bouton "Exporter en PDF"  */
+.btn {
+  height: 30px;
+  width: 250px;
+  margin: 50px;
+  padding: 1px;
+  border-radius: 30px;
+  background: #3C91E6;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  grid-gap: 10px;
+  font-weight: 500;
+}
+/* Conteneur de boutons */
+.container-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Style pour le bouton "Exporter en CSV" et "Ajouter" */
+.export-button, .add-button {
+  background-color: #7abdff;
+  color: white;
+  border: none;
+  border-radius: 40px;
+  padding: 5px 10px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+.export-button:hover, .add-button:hover {
+  background-color: #3C91E6; /* Couleur au survol */
+}
+
+#studentDetails h4,#professorDetails h4,
+#courseDetails h4,#gradeDetails h4,
+#examDetails h4 , #studentGrades h4 {
+  color: #5b94d6;
+  font-family: 'Segoe UI';
+}
+
+
+/*  ---Pagination--- */
+#pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+#prevBtn,
+#nextBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  background-color: #92c4f7;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin: 0 10px;
+}
+
+#prevBtn:disabled,
+#nextBtn:disabled {
+  background-color: #ddd;
+  cursor: not-allowed;
+}
+
+#prevBtn:hover,
+#nextBtn:hover {
+  background-color: #7cb1e9;
+}
+
+#pageNumber {
+  font-size: 18px;
+  margin: 0 10px;
+}
+
+
+/*  ---Responsive Design--- */
+/* Grand écran et tablette large (1024px - 1366px) */
+@media screen and (max-width: 1366px) {
+  #sidebar {
+    width: 240px;
+  }
+
+  #content {
+    left: 240px;
+    width: calc(100% - 240px);
+  }
+
+  .canvas .stat {
+    flex-basis: calc(50% - 20px);
+  }
+
+  .form-input {
+    height: 34px;
+  }
+
+  .form-input input {
+    font-size: 14px;
+  }
+
+  .form-input button {
+    width: 50px;
+    font-size: 20px;
+  }
+
+  .btn {
+    width: 220px;
+    height: 32px;
+  }
+}
+
+/* Tablette (768px - 1023px) */
+@media screen and (max-width: 1023px) {
+  #sidebar {
+    width: 200px;
+  }
+
+  #content {
+    left: 200px;
+    width: calc(100% - 200px);
+  }
+
+  .form-container {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .form-input {
+    height: 32px;
+  }
+
+  .form-input input {
+    font-size: 13px;
+    padding: 0 12px;
+  }
+
+  .form-input button {
+    width: 40px;
+    font-size: 18px;
+  }
+
+  .sort-selector {
+    width: 150px;
+  }
+
+  .sort-selector select {
+    font-size: 13px;
+    padding: 6px 8px;
+  }
+
+  .box-info {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+  }
+
+  #content main {
+    padding: 24px 20px;
+  }
+
+  table {
+    font-size: 13px;
+  }
+
+  td button {
+    font-size: 11px;
+    padding: 4px 8px;
+  }
+
+  .btn {
+    width: 200px;
+    height: 30px;
+    margin: 30px;
+  }
+}
+
+/* Mobile large (481px - 767px) */
+@media screen and (max-width: 767px) {
+  #sidebar {
+    width: 60px;
+  }
+
+  #sidebar .logo .text,
+  #sidebar ul.side-menu li a .text {
+    display: none;
+  }
+
+  #content {
+    left: 60px;
+    width: calc(100% - 60px);
+    padding: 0 10px;
+  }
+
+  .form-input {
+    height: 30px;
+  }
+
+  .form-input input {
+    font-size: 12px;
+    padding: 0 10px;
+    width: calc(100% - 35px);
+  }
+
+  .form-input button {
+    width: 35px;
+    font-size: 16px;
+  }
+
+  .sort-selector {
+    width: 120px;
+  }
+
+  .head-title {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .canvas .stat {
+    flex-basis: 100%;
+    padding: 15px;
+  }
+
+  .canvas canvas {
+    max-height: 180px;
+  }
+
+  .form-container {
+    width: 95%;
+    padding: 12px;
+  }
+
+  .form-container input,
+  .form-container select {
+    margin-bottom: 12px;
+    font-size: 13px;
+  }
+
+  table {
+    font-size: 12px;
+  }
+
+  td button {
+    font-size: 10px;
+    padding: 3px 6px;
+  }
+
+  .btn {
+    width: 160px;
+    height: 28px;
+    margin: 20px;
+    font-size: 12px;
+  }
+
+  #prevBtn, #nextBtn {
+    padding: 8px 15px;
+    font-size: 14px;
+  }
+}
+
+/* Mobile small (320px - 480px) */
+@media screen and (max-width: 480px) {
+  #content main {
+    padding: 15px 10px;
+  }
+
+  .form-input {
+    height: 28px;
+  }
+
+  .form-input input {
+    font-size: 11px;
+    padding: 0 8px;
+  }
+
+  .form-input button {
+    width: 30px;
+    font-size: 14px;
+  }
+
+  .sort-selector {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .canvas .stat {
+    padding: 12px;
+  }
+
+  .canvas canvas {
+    max-height: 150px;
+  }
+
+  .form-container {
+    padding: 10px;
+  }
+
+  .form-container input,
+  .form-container select,
+  .form-container button {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  table {
+    font-size: 11px;
+  }
+
+  th, td {
+    padding: 6px 4px;
+  }
+
+  td button {
+    font-size: 9px;
+    padding: 2px 4px;
+    margin-right: 2px;
+  }
+
+  .btn {
+    width: 140px;
+    height: 26px;
+    margin: 15px;
+    font-size: 11px;
+  }
+
+  #prevBtn, #nextBtn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+
+  #pageNumber {
+    font-size: 14px;
+  }
+}
+
+/* Orientation paysage pour mobiles */
+@media screen and (max-height: 480px) and (orientation: landscape) {
+  #content main {
+    padding: 10px;
+  }
+
+  .form-input {
+    height: 28px;
+  }
+
+  .form-input button {
+    width: 32px;
+  }
+
+  .canvas .stat {
+    flex-basis: calc(50% - 10px);
+    padding: 10px;
+  }
+
+  .canvas canvas {
+    max-height: 120px;
+  }
+}
+
+/* Support pour les écrans à haute densité de pixels */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .form-input input,
+  .sort-selector select,
+  button {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* Support pour préférence de réduction de mouvement */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+  }
+}

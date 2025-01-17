@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Professeurs</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text"  onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <section id="content-professeurs">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Gestion des professerus</h1>
+            <ul class="liste">
+              <li><a href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-professeurs.html">Liste des professeurs</a></li>
+
+            </ul>
+          </div>
+        </div>
+
+        <!-- Formulaire pour ajouter un professeur -->
+        <div class="form-container" id="add-professor-form">
+          <form id="addProfessorForm" onsubmit="addProfessor(event)">
+            <!-- Nom -->
+            <label for="name">Nom:</label>
+            <input type="text" id="name" name="name" required>
+
+            <!-- Prénom -->
+            <label for="prenom">Prénom:</label>
+            <input type="text" id="prenom" name="prenom" required>
+
+             <!-- Date de naissance -->
+             <label for="date">Date de naissance:</label>
+             <input type="date" id="date" name="date" required>
+
+              <!-- Genre -->
+            <label for="genre">Genre:</label>
+            <select id="genre" name="genre" required>
+              <option value="Masculin">Masculin</option>
+              <option value="Féminin">Féminin</option>
+            </select>
+
+            <!-- Matière -->
+            <label for="subject">Matière :</label>
+            <input id="subject" name="subject" required>
+
+            <!-- Email -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <!-- Téléphone -->
+            <label for="phone">Téléphone:</label>
+            <input type="text" id="phone" name="phone" required>
+
+            <!-- Bouton de soumission -->
+            <button type="submit">Ajouter</button>
+          </form>
+        </div>
+      </main>
+    </section>
+    <script src="script.js"></script>
+    <script>
+      function addProfessor(event) {
+        event.preventDefault(); // Empêche le rechargement de la page
+
+        // Récupération des valeurs des champs du formulaire
+        const name = document.getElementById('name').value;
+        const prenom = document.getElementById('prenom').value;
+        const date = document.getElementById('date').value;
+        const genre = document.getElementById('genre').value;
+        const subject = document.getElementById('subject').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+
+        // Récupération de la liste des professeurs dans le localStorage
+        let professors = JSON.parse(localStorage.getItem('professors')) || [];
+
+        // Création d'un nouveau objet de professeur 
+        const newProfessor = {
+          name,
+          prenom,
+          date,
+          genre,
+          subject,
+          email,
+          phone
+        };
+
+        // Ajout du professeur dans le tableau
+        professors.push(newProfessor);
+
+        // Mise à jour du localStorage avec la liste des professeurs
+        localStorage.setItem('professors', JSON.stringify(professors));
+
+        // Réinitialisation du formulaire
+        document.getElementById('addProfessorForm').reset();
+
+        // Affichage d'un message de succès
+        alert("Professeur ajouté avec succès !");
+        window.location.href = 'liste-professeurs.html';
+      }
+    </script>
+</body>
+</html>

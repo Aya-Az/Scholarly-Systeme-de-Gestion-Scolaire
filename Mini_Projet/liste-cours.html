@@ -1,0 +1,266 @@
+<!-- Liste Cours -->
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Cours</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Mon CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <section id="sidebar">
+        <a href="#" class="logo">
+            <i class="fas fa-school"></i>
+            <span class="text">Scholarly</span>
+        </a>
+
+        <ul class="side-menu top">
+            <li class="active">
+                <a href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="text">Tableau de Bord</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-etudiants.html">
+                    <i class="fas fa-user-graduate"></i>
+                    <span class="text">Étudiants</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-professeurs.html">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span class="text">Professeurs</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-cours.html">
+                    <i class="fas fa-book-open"></i>
+                    <span class="text">Cours</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-examens.html">
+                    <i class="fas fa-pen"></i>
+                    <span class="text">Examens</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-notes.html">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="text">Notes</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="login.html" class="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="text"  onclick="logout()">Déconnexion</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+
+    <section id="content">
+        <main>
+            <h1>Liste des Cours</h1>
+            <section id="content-cours">
+                <div class="head-title">
+                    <div class="container">
+                        <ul class="liste">
+                            <li><a class="active" href="dashboard.html">Accueil</a></li>
+                            <li><i class="fas fa-chevron-right"></i></li>
+                            <li><a href="liste-cours.html">Liste des Cours</a></li>
+                        </ul>
+                    </div>
+                    <div class="container-button ">
+                        <button id="export-csv" class="export-button" onclick="exportToCSV() ">Exporter en CSV</button>
+                        <button id="add-button" class="add-button" onclick="addCours()">Ajouter</button>
+                    </div>
+                </div>
+            </section>
+            <br>
+
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="searchInput" placeholder="Rechercher..." oninput="searchCourses()">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button><br>
+                    <div class="sort-selector">
+                        <select id="sortSelect" onchange="sortTable()">
+                            <option value="">Trier par : </option>
+                            <option value="title">Titre</option>
+                            <option value="professor">Professeur</option>
+                            <option value="duration">Durée (heures)</option>
+                            <option value="schedule">Planning (Date et Heure)</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Titre</th>
+                        <th>Professeur</th>
+                        <th>Durée (heures)</th>
+                        <th>Planning (Date et Heure)</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="courseTable">
+                    <!-- Les cours seront ajoutés ici dynamiquement -->
+                </tbody>
+            </table>
+
+            <div id="pagination">
+                <button id="prevBtn" onclick="prevPage()">Précédent</button>
+                <span id="pageNumber">Page 1</span>
+                <button id="nextBtn" onclick="nextPage()">Suivant</button>
+            </div>
+
+        </main>
+    </section>
+   <script src="script.js"></script>
+    <script>
+        const coursesPerPage = 5; // Nombre de cours par page
+        let currentPage = 1; // Page actuelle
+
+        const courses = JSON.parse(localStorage.getItem('courses')) || [];
+        const professors = JSON.parse(localStorage.getItem('professors')) || []; // Récupérer les étudiants
+        console.log("Notes récupérées :", courses); // Debugging pour vérifier la récupération
+        let filteredCourses = [...courses]; // Liste filtrée pour affichage
+
+        function addCours() {
+            window.location.href = 'ajouter-cours.html';
+        }
+
+        // Fonction pour obtenir le nom de l'étudiant à partir de son index
+        function getProfessorNameByIndex(professorIndex) {
+            console.log("Recherche de l'étudiant à l'index : " + professorIndex); // Log de débogage
+            // Vérification si l'index est valide
+            if (professorIndex < 0 || professorIndex >= professors.length) {
+                console.log("Index invalide ou hors limites : " + professorIndex);
+                return 'Index non valide';
+            }
+            const professor = professors[professorIndex];
+            console.log("Professeur trouvé : " + professor.name + " " + professor.prenom); // Log si l'étudiant est trouvé
+            return `${professor.name} ${professor.prenom}`; // Retourner le nom complet de le cours
+        }
+
+
+        function renderCourses() {
+            const courseTable = document.getElementById('courseTable');
+            courseTable.innerHTML = '';
+
+            const start = (currentPage - 1) * coursesPerPage;
+            const end = start + coursesPerPage;
+            const currentCourses = filteredCourses.slice(start, end);
+
+            currentCourses.forEach((course, index) => {
+                // Calculer l'index réel dans le tableau complet
+                const realIndex = start + index; 
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${course.title}</td>
+                     <td>${getProfessorNameByIndex(course.professorIndex)}</td>
+                    <td>${course.duration} heures</td>
+                    <td>${course.schedule}</td>
+                    <td>
+                        <button onclick="window.location.href='modifier-cours.html?id=${realIndex}'">Modifier</button>
+                        <button onclick="deleteCourse(${realIndex})">Supprimer</button>
+                        <button onclick="window.location.href='voir-details-cours.html?id=${realIndex}'">Voir Détails</button>
+                    </td>
+                `;
+                courseTable.appendChild(row);
+            });
+
+            document.getElementById('pageNumber').innerText = `Page ${currentPage}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage * coursesPerPage >= filteredCourses.length;
+        }
+
+        function nextPage() {
+            currentPage++;
+            renderCourses();
+        }
+
+        function prevPage() {
+            currentPage--;
+            renderCourses();
+        }
+
+        function deleteCourse(index) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce cours ?")) {
+                courses.splice(index, 1);
+                localStorage.setItem('courses', JSON.stringify(courses));
+                renderCourses();
+                alert("Cours supprimé avec succès !");
+            }
+        }
+
+        function sortTable() {
+            const sortBy = document.getElementById("sortSelect").value;
+
+            filteredCourses.sort((a, b) => {
+                let valueA, valueB;
+                // Récupérer la valeur de tri en fonction de la sélection
+                if (sortBy === "professor") {
+                    // Si c'est le tri par professeur, récupérer les noms des professeurs
+                    valueA = getProfessorNameByIndex(a.professorIndex).toLowerCase();
+                    valueB = getProfessorNameByIndex(b.professorIndex).toLowerCase();
+                } else {
+                    // Pour les autres champs (title, duration, schedule)
+                    valueA = a[sortBy].toString().toLowerCase();
+                    valueB = b[sortBy].toString().toLowerCase();
+                }
+                // Comparer les valeurs
+                if (valueA < valueB) return -1;
+                if (valueA > valueB) return 1;
+                return 0;
+            });
+            renderCourses(); // Rendre les cours après le tri
+        }
+
+        function searchCourses() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            filteredCourses = courses.filter(course => {
+                return (
+                    course.title.toLowerCase().includes(query) ||
+                    course.duration.toString().toLowerCase().includes(query) ||
+                    course.schedule.toLowerCase().includes(query) ||
+                    getProfessorNameByIndex(course.professorIndex).toLowerCase().includes(query)
+                );
+            });
+            renderCourses();
+        }
+        function exportToCSV() {
+            let csvContent = "Titre,Professeur,Durée (heures),Planning (Date et Heure)\n"; // En-têtes CSV
+
+            // Parcourir les cours filtrés pour créer les lignes CSV
+            filteredCourses.forEach(course => {
+                const professorName = getProfessorNameByIndex(course.professorIndex) || 'Inconnu';
+                csvContent += `${course.title},${professorName},${course.duration} heures,${course.schedule}\n`;
+            });
+
+            // Créer un lien pour le téléchargement du fichier CSV
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+            link.download = 'cours.csv'; // Nom du fichier CSV
+            link.click(); // Simule un clic pour lancer le téléchargement
+        }
+
+        renderCourses();
+    </script>
+
+</body>
+
+</html>

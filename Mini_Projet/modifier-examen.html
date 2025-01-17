@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifier un Examen</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <section id="sidebar">
+    <a href="dashboard.html" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text"  onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <section id="content-examens">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Modification de l'examen</h1>
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-examens.html">Liste des Examens</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-container" id="edit-exam-form">
+          <form id="editExamForm">
+
+            <!-- Exam -->
+            <label for="exam">Examen:</label>
+          <input id="exam" name="exam" required>
+
+            <!-- Date de l'Examen -->
+            <label for="exam-date">Date de l'Examen:</label>
+            <input type="date" id="date" name="exam-date" required>
+
+            <!-- Durée de l'Examen -->
+            <label for="exam-duration">Durée (en heures):</label>
+            <input type="number" id="duration" name="exam-duration" required>
+
+            <!-- Professeur -->
+            <label for="professor">Professeur:</label>
+            <select id="professor" name="professor" required>
+              <option value="">--Sélectionner un professeur--</option>
+              <!-- Options dynamiques -->
+            </select>
+
+            <button type="submit">Mettre à jour</button>
+          </form>
+        </div>
+      </main>
+    </section>
+  </section>
+  <script src="script.js"></script>
+  <script>
+    // Pré-remplir la liste des professeurs
+    function populateProfessorDropdown() {
+      const professors = JSON.parse(localStorage.getItem('professors')) || [];
+      const select = document.getElementById('professor');
+      select.innerHTML = ''; // Vider les options actuelles
+      professors.forEach((professor, index) => {
+        const option = document.createElement('option');
+        option.value = index; // Utiliser l'index du professeur
+        option.textContent = `${professor.name} ${professor.prenom}`;
+        select.appendChild(option);
+      });
+    }
+
+    // Pré-remplir le formulaire d'examen à modifier
+    const urlParams = new URLSearchParams(window.location.search);
+    const examIndex = urlParams.get('id');
+
+    if (examIndex === null || isNaN(examIndex)) {
+      alert("Erreur: Index d'examen non valide.");
+      window.location.href = 'examens.html'; // Rediriger si l'index est incorrect
+    }
+
+    // Récupérer les examens, les professeurs et les cours depuis le localStorage
+    const exams = JSON.parse(localStorage.getItem('exams')) || [];
+    const professors = JSON.parse(localStorage.getItem('professors')) || [];
+
+    // Vérifier si l'examen existe
+    const exam = exams[examIndex];
+    if (!exam) {
+      alert("Examen non trouvé.");
+      window.location.href = 'examens.html'; // Rediriger si l'examen n'existe pas
+    }
+
+    // Pré-remplir les champs avec les données existantes
+    document.getElementById('exam').value = exam.exam;
+    document.getElementById('date').value = exam.date;
+    document.getElementById('duration').value = exam.duration;
+
+    // Pré-sélectionner le cours et le professeur
+    populateProfessorDropdown();
+    document.getElementById('professor').value = exam.professorIndex;
+    document.getElementById('editExamForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Récupérer les indices sélectionnés pour le cours et le professeur
+      const exam = document.getElementById('exam').value;
+      const professorIndex = document.getElementById('professor').value;
+      const date = document.getElementById('date').value;
+      const duration = document.getElementById('duration').value;
+
+      // Mettre à jour l'examen dans la liste des examens
+      exams[examIndex] = {
+        exam: exam,
+        date: date,
+        professorIndex: professorIndex,
+        duration: duration
+      };
+
+      // Sauvegarder les modifications dans le localStorage
+      localStorage.setItem('exams', JSON.stringify(exams));
+
+      // Rediriger vers la page des examens
+      window.location.href = 'liste-examens.html';
+    });
+  </script>

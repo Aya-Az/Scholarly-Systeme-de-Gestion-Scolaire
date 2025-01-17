@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Examens</title>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Mon CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <section id="sidebar">
+        <a href="#" class="logo">
+            <i class="fas fa-school"></i>
+            <span class="text">Scholarly</span>
+        </a>
+
+        <ul class="side-menu top">
+            <li class="active">
+                <a href="dashboard.html">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span class="text">Tableau de Bord</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-etudiants.html">
+                    <i class="fas fa-user-graduate"></i>
+                    <span class="text">Étudiants</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-professeurs.html">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span class="text">Professeurs</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-cours.html">
+                    <i class="fas fa-book-open"></i>
+                    <span class="text">Cours</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-examens.html">
+                    <i class="fas fa-pen"></i>
+                    <span class="text">Examens</span>
+                </a>
+            </li>
+            <li>
+                <a href="liste-notes.html">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="text">Notes</span>
+                </a>
+            </li>
+        </ul>
+        <ul class="side-menu">
+            <li>
+                <a href="login.html" class="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span class="text"  onclick="logout()">Déconnexion</span>
+                </a>
+            </li>
+        </ul>
+    </section>
+    <section id="content">
+        <main>
+            <h1>Liste des Examens</h1>
+            <section id="content-examens">
+                <div class="head-title">
+                    <div class="container">
+                        <ul class="liste">
+                            <li><a class="active" href="dashboard.html">Accueil</a></li>
+                            <li><i class="fas fa-chevron-right"></i></li>
+                            <li><a href="liste-examens.html">Liste des Examens</a></li>
+                        </ul>
+                    </div>
+                    <div class="container-button ">
+                        <button id="export-csv" class="export-button" onclick="exportToCSV() ">Exporter en CSV</button>
+                        <button id="add-button" class="add-button" onclick="addExamen()">Ajouter</button>
+                    </div>
+                </div>
+            </section>
+            <br>
+            <form action="#">
+                <div class="form-input">
+                    <input type="search" id="searchInput" placeholder="Rechercher..." oninput="searchExams()">
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i>
+                    </button><br>
+                    <div class="sort-selector">
+                        <select id="sortSelect" onchange="sortTable()">
+                            <option value="">Trier par :</option>
+                            <option value="exam">Exam</option>
+                            <option value="date">Date de l'examen</option>
+                            <option value="duration">Durée (en heures)</option>
+                            <option value="professorIndex">Professeur</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cours</th>
+                        <th>Date de l'examen</th>
+                        <th>Durée (en heures)</th>
+                        <th>Professeur</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="examTable">
+                    <!-- Les examens seront ajoutés ici dynamiquement -->
+                </tbody>
+            </table>
+            <div id="pagination">
+                <button id="prevBtn" onclick="prevPage()">Précédent</button>
+                <span id="pageNumber">Page 1</span>
+                <button id="nextBtn" onclick="nextPage()">Suivant</button>
+            </div>
+        </main>
+    </section>
+    <script src="script.js"></script>
+    <script>
+        const examsPerPage = 5; // Nombre d'examens par page
+        let currentPage = 1; // Page actuelle
+
+        const exams = JSON.parse(localStorage.getItem('exams')) || [];
+        const professors = JSON.parse(localStorage.getItem('professors')) || [];
+        console.log("Exams récupérés :", exams);
+        console.log("Professors récupérés :", professors);
+
+        let filteredExams = [...exams]; // Liste filtrée pour affichage
+        function addExamen() {
+            window.location.href = 'ajouter-examen.html';
+        }
+        // Fonction pour obtenir le nom de le professeurs à partir de son index
+        function getProfessorNameByIndex(professorIndex) {
+            console.log("Recherche de l'étudiant à l'index : " + professorIndex); // Log de débogage
+            // Vérification si l'index est valide
+            if (professorIndex < 0 || professorIndex >= professors.length) {
+                console.log("Index invalide ou hors limites : " + professorIndex);
+                return 'Index non valide';
+            }
+            const professor = professors[professorIndex];
+            console.log("Professeur trouvé : " + professor.name + " " + professor.prenom); // Log si l'étudiant est trouvé
+            return `${professor.name} ${professor.prenom}`; // Retourner le nom complet de le cours
+        }
+        function renderExams() {
+            const examTable = document.getElementById('examTable');
+            examTable.innerHTML = '';
+
+            const start = (currentPage - 1) * examsPerPage;
+            const end = start + examsPerPage;
+            const currentExams = filteredExams.slice(start, end);
+
+            currentExams.forEach((exam, index) => {
+                // Calculer l'index réel dans le tableau complet
+                const realIndex = start + index; 
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${exam.exam}</td>
+                    <td>${exam.date}</td>
+                    <td>${exam.duration} heures</td>
+                    <td>${getProfessorNameByIndex(exam.professorIndex)}</td>
+                    <td>
+                        <button onclick="window.location.href='modifier-examen.html?id=${realIndex}'">Modifier</button>
+                        <button onclick="deleteExam(${realIndex})">Supprimer</button>
+                         <button onclick="window.location.href='voir-details-exam.html?id=${realIndex}'">Voir Détails</button>
+                    </td>
+                `;
+                examTable.appendChild(row);
+            });
+
+            document.getElementById('pageNumber').innerText = `Page ${currentPage}`;
+            document.getElementById('prevBtn').disabled = currentPage === 1;
+            document.getElementById('nextBtn').disabled = currentPage * examsPerPage >= filteredExams.length;
+        }
+        function nextPage() {
+            currentPage++;
+            renderExams();
+        }
+        function prevPage() {
+            currentPage--;
+            renderExams();
+        }
+        function deleteExam(index) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cet examen ?")) {
+                exams.splice(index, 1);
+                localStorage.setItem('exams', JSON.stringify(exams));
+                renderExams();
+
+                alert("Examen supprimé avec succès !");
+            }
+        }
+        function sortTable() {
+            const sortBy = document.getElementById("sortSelect").value;
+
+            filteredExams.sort((a, b) => {
+                let valueA, valueB;
+
+                // Récupérer la valeur de tri en fonction de la sélection
+                if (sortBy === "professorIndex") {
+                    // Si c'est le tri par professeur, récupérer les noms des professeurs
+                    valueA = getProfessorNameByIndex(a.professorIndex).toLowerCase();
+                    valueB = getProfessorNameByIndex(b.professorIndex).toLowerCase();
+                } else {
+                    // Pour les autres champs (date, duration)
+                    valueA = a[sortBy].toString().toLowerCase();
+                    valueB = b[sortBy].toString().toLowerCase();
+                }
+
+                // Comparer les valeurs
+                if (valueA < valueB) return -1;
+                if (valueA > valueB) return 1;
+                return 0;
+            });
+
+            renderExams(); // Rendre les examens après le tri
+        }
+
+        function searchExams() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            filteredExams = exams.filter(exam => {
+                return (
+                    exam.exam.toLowerCase().includes(query) ||
+                    getProfessorNameByIndex(exam.professorIndex).toLowerCase().includes(query) ||
+                    exam.date.toLowerCase().includes(query)
+                );
+            });
+            renderExams();
+        }
+        function exportToCSV() {
+            // Add CSV headers
+            let csvContent = "Examen,Date de l'examen,Durée (en heures),Professeur\n";
+
+            // Add exam data to CSV content
+            filteredExams.forEach(exam => {
+                const examen = exam.exam || 'Inconnu';
+                const professorFullName = getProfessorNameByIndex(exam.professorIndex) || 'Inconnu';
+                const date = exam.date || 'Inconnu';
+                const duration = exam.duration || 'Inconnu';
+
+                csvContent += `${examen},${date},${duration},${professorFullName}\n`;
+            });
+
+            // Create a download link
+            const link = document.createElement('a');
+            link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+            link.download = 'examens.csv';
+            link.click();
+        }
+       
+        renderExams();
+    </script>
+</body>
+
+</html>

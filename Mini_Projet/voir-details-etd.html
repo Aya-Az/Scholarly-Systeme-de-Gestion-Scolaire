@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Détails de l'étudiant</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text" onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+  <section id="content">
+    <section id="content-etudiants">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Détails des étudiants </h1>
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-etudiants.html">Liste des etudiants</a></li>
+            </ul>
+          </div>
+        </div>
+        <!-- Formulaire pour ajouter un étudiant -->
+        <div class="form-container" id="add-student-form">
+          <div id="studentDetails">
+            <!-- Détails de l'étudiant sélectionné -->
+          </div>
+          <div id="studentGrades">
+            <!-- Les notes de l'étudiant seront affichées ici -->
+          </div>
+
+          <div>
+            <a href="#" class="btn" onclick="exportStudentsToPDF()">
+              <i class="fas fa-cloud-download"></i>
+              <span class="text">Exporter en PDF</span>
+            </a>
+          </div>
+        </div>
+      </main>
+    </section>
+    <script src="script.js"></script>
+
+    <script>
+      // Récupérer l'index de l'étudiant depuis l'URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const studentIndex = parseInt(urlParams.get('id'), 10);
+
+      // Récupérer les étudiants et les notes depuis le localStorage
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      console.log(grades);
+      console.log(students);
+
+      // Vérifier si l'index existe et est valide
+      if (studentIndex >= 0 && studentIndex < students.length) {
+        const student = students[studentIndex]; // Récupérer l'étudiant par index
+        const studentGrades = grades.filter(g => g.studentIndex === studentIndex); // Filtrer les notes par studentIndex
+
+        // Afficher les informations personnelles
+        let details = `
+      <h4>Détails de l'étudiant :</h4>
+      <p><strong>Nom :</strong> ${student.name}</p>
+      <p><strong>Prénom :</strong> ${student.prenom}</p>
+      <p><strong>Date de naissance :</strong> ${student.date}</p>
+      <p><strong>Genre :</strong> ${student.genre}</p>
+      <p><strong>Classe :</strong> ${student.classe}</p>
+      <p><strong>Téléphone :</strong> ${student.phone}</p>
+      <p><strong>Email :</strong> ${student.email}</p><br>
+    `;
+        document.getElementById('studentDetails').innerHTML = details;
+        // Afficher les notes de l'étudiant
+        if (studentGrades.length > 0) {
+          let gradesDetails = '<h4>Détails des Notes :</h4>';
+          studentGrades.forEach(grade => {
+            gradesDetails += `
+          <p><strong>Examen :</strong> ${grade.exam}</p>
+          <p><strong>Note :</strong> ${grade.grade}</p>
+          <p><strong>Coefficient :</strong> ${grade.coefficient}</p><br>
+        `;
+          });
+          document.getElementById('studentGrades').innerHTML = gradesDetails;
+        } else {
+          document.getElementById('studentGrades').innerHTML = '<p>Aucune note disponible.</p>';
+        }
+      } else {
+        document.getElementById('studentDetails').textContent = "Étudiant introuvable.";
+      }
+
+      function exportStudentsToPDF() {
+        const { jsPDF } = window.jspdf;
+        const { autoTable } = window.jspdf;
+
+        // Récupérer l'index de l'étudiant depuis l'URL
+        const studentIndex = new URLSearchParams(window.location.search).get('id');
+
+        // Récupérer les étudiants et les notes depuis le localStorage
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const grades = JSON.parse(localStorage.getItem('grades')) || [];
+
+        // Vérifier si l'index existe et est valide
+        if (studentIndex >= 0 && studentIndex < students.length) {
+          const student = students[studentIndex];
+          const studentGrades = grades.filter(g => g.studentIndex === parseInt(studentIndex));
+
+          // Extraire les données personnelles
+          const studentData = [
+            ["Nom", student.name || "Inconnu"],
+            ["Prénom", student.prenom || "Inconnu"],
+            ["Date de naissance", student.date || "Inconnu"],
+            ["Genre", student.genre || "Non spécifié"],
+            ["Classe", student.classe || "Non spécifié"],
+            ["Téléphone", student.phone || "Non spécifié"],
+            ["Email", student.email || "Non spécifié"]
+          ];
+
+          // Initialiser le document PDF
+          const pdf = new jsPDF();
+
+          // Ajouter un titre
+          pdf.setFontSize(16);
+          pdf.text("Détails de l'Étudiant", 10, 10);
+
+          // Ajouter le tableau des détails personnels de l'étudiant
+          pdf.autoTable({
+            startY: 20,
+            head: [['Détails', 'Valeurs']],
+            body: studentData,
+            theme: 'grid',
+            margin: { left: 10, right: 10 },
+          });
+
+          // Si l'étudiant a des notes, les ajouter dans une section distincte
+          if (studentGrades && studentGrades.length > 0) {
+            const gradesData = studentGrades.map(grade => [
+              grade.exam || "Non spécifié",
+              grade.grade || "Non spécifié",
+              grade.coefficient || "Non spécifié"
+            ]);
+
+            // Ajouter un titre pour les notes
+            pdf.setFontSize(14);
+            pdf.text("Détails des Notes", 10, pdf.autoTable.previous.finalY + 10);
+
+            // Ajouter le tableau des notes avec les en-têtes corrects
+            pdf.autoTable({
+              startY: pdf.autoTable.previous.finalY + 15,
+              head: [['Examen', 'Note', 'Coefficient']],  // Correction des en-têtes
+              body: gradesData,
+              theme: 'grid',
+              margin: { left: 10, right: 10 },
+            });
+          } else {
+            pdf.setFontSize(14);
+            pdf.text("Aucune note disponible pour cet étudiant.", 10, pdf.autoTable.previous.finalY + 10);
+          }
+
+          // Définir un nom dynamique pour le fichier
+          const fileName = `Details_Etudiant_${student.name || 'Inconnu'}.pdf`;
+
+          // Sauvegarder le fichier PDF
+          pdf.save(fileName);
+        } else {
+          alert("L'étudiant n'a pas été trouvé.");
+        }
+      }
+
+    </script>
+</body>
+</html>

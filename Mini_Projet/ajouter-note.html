@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Notes</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text" onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <section id="content-notes">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Gestion des notes</h1>
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-notes.html">Liste des Notes</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Formulaire pour ajouter une note -->
+        <div class="form-container" id="add-grade-form">
+          <form id="addGradeForm" onsubmit="addGrade(event)">
+            <!-- Étudiant -->
+            <label for="student">Étudiant:</label>
+            <select id="student" name="student" required>
+              <!-- Options dynamiques -->
+            </select>
+
+            <!-- Examen -->
+            <label for="exam">Examen:</label>
+            <input id="exam" name="exam" required>
+
+             <!-- Coefficient -->
+            <label for="coefficient">Coefficient:</label>
+            <input type="number" id="coefficient" name="coefficient" min="1" step="0.1" required>
+
+            <!-- Note -->
+            <label for="grade">Note:</label>
+            <input type="number" id="grade" name="grade" min="0" max="20" required>
+
+            <!-- Bouton de soumission -->
+            <button type="submit">Ajouter</button>
+          </form>
+        </div>
+      </main>
+    </section>
+    <script src="script.js"></script>
+
+    <script>
+      // Fonction pour remplir la liste des étudiants
+      function populateStudentDropdown() {
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const select = document.getElementById('student');
+        select.innerHTML = '';  // Vider les options actuelles
+        students.forEach((student, index) => {
+          const option = document.createElement('option');
+          option.value = index;  // Utiliser l'index de l'étudiant
+          option.textContent = `${student.name} ${student.prenom}`;
+          select.appendChild(option);
+        });
+      }
+
+      // Fonction pour ajouter une note
+      function addGrade(event) {
+        event.preventDefault();  // Empêche le rechargement de la page lors de la soumission
+
+        const studentIndex = parseInt(document.getElementById('student').value, 10);
+        const exam = document.getElementById('exam').value.trim();
+        const grade = parseFloat(document.getElementById('grade').value);
+        const coefficient = parseFloat(document.getElementById('coefficient').value); // Récupérer la valeur du coefficient
+
+        // Récupérer les étudiants et ajouter la note correspondante à l'étudiant
+        let grades = JSON.parse(localStorage.getItem('grades')) || [];
+
+        // Création d'un nouvel objet de note
+        const newgrade = {
+          studentIndex,
+          exam,
+          coefficient,
+          grade
+        };
+
+        // Ajout du nouveau note dans le tableau
+        grades.push(newgrade);
+
+        // Mise à jour du localStorage avec la nouvelle liste des notes
+        localStorage.setItem('grades', JSON.stringify(grades));
+
+        // Réinitialiser le formulaire
+        document.getElementById('addGradeForm').reset();
+
+        // Afficher un message de succès
+        alert("Note ajoutée avec succès !");
+        window.location.href = 'liste-notes.html';
+      }
+
+      populateStudentDropdown();  // Remplir la liste des étudiants quand la page se charge
+    </script>
+</body>
+
+</html>

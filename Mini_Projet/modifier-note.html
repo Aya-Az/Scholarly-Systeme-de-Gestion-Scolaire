@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Modifier une Note</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <section id="sidebar">
+    <a href="dashboard.html" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text"  onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <section id="content-notes">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Modification de la Note</h1>
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-notes.html">Liste des Notes</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="form-container" id="edit-grade-form">
+          <form id="editGradeForm">
+
+            <!-- Étudiant -->
+            <label for="student">Étudiant:</label>
+            <select id="student" name="student" required>
+              <!-- Options dynamiques -->
+            </select>
+
+            <!-- Examen -->
+            <label for="exam">Examen:</label>
+            <input id="exam" name="exam" required>
+
+             <!-- Coefficient -->
+             <label for="coefficient">Coefficient:</label>
+             <input type="number" id="coefficient" name="coefficient" min="1" step="0.1" required>
+
+            <!-- Note -->
+            <label for="grade">Note:</label>
+            <input type="number" id="grade" name="grade" min="0" max="20" required>
+
+
+            <button type="submit">Mettre à jour</button>
+          </form>
+        </div>
+      </main>
+    </section>
+    <script src="script.js"></script>
+    <script>
+      // Récupérer l'index de la note depuis l'URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const gradeIndex = parseInt(urlParams.get('id'), 10);
+
+      // Vérifier si l'index est valide
+      if (isNaN(gradeIndex)) {
+        alert("Erreur: Index de note non valide.");
+        window.location.href = 'liste-notes.html'; // Rediriger si l'index est incorrect
+      }
+
+      // Récupérer les données du localStorage
+      const grades = JSON.parse(localStorage.getItem('grades')) || [];
+      const students = JSON.parse(localStorage.getItem('students')) || [];
+
+      // Vérifier si la note existe
+      const grade = grades[gradeIndex];
+      if (!grade) {
+        alert("Note non trouvée.");
+        window.location.href = 'liste-notes.html'; // Rediriger si la note n'existe pas
+      }
+
+      // Fonction pour remplir la liste des étudiants dans le select
+      function populateStudentDropdown() {
+        const select = document.getElementById('student');
+        select.innerHTML = '';  // Vider les options actuelles
+        students.forEach((student, index) => {
+          const option = document.createElement('option');
+          option.value = index;  // Utiliser l'index de l'étudiant
+          option.textContent = `${student.name} ${student.prenom}`;
+          select.appendChild(option);
+        });
+
+        // Sélectionner l'étudiant actuel pour la modification
+        select.value = grade.studentIndex;
+      }
+
+      // Remplir la liste des étudiants quand la page se charge
+      populateStudentDropdown();
+
+      // Pré-remplir les autres champs du formulaire
+      document.getElementById('exam').value = grade.exam;
+      document.getElementById('grade').value = grade.grade;
+      document.getElementById('coefficient').value = grade.coefficient;
+
+      // Gérer la soumission du formulaire
+      document.getElementById('editGradeForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        // Mettre à jour les informations de la note
+        grades[gradeIndex] = {
+          studentIndex: parseInt(document.getElementById('student').value, 10), // L'index de l'étudiant sélectionné
+          exam: document.getElementById('exam').value,
+          coefficient: document.getElementById('coefficient').value,
+          grade: parseFloat(document.getElementById('grade').value), // Convertir en nombre
+        };
+
+        // Sauvegarder les modifications dans le localStorage
+        localStorage.setItem('grades', JSON.stringify(grades));
+
+        // Rediriger vers la page principale après la mise à jour
+        window.location.href = 'liste-notes.html';
+      });
+    </script>
+</body>
+
+</html>

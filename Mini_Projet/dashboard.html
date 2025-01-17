@@ -1,0 +1,311 @@
+<!-- Tableau de bord -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion d'une École</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+  <!-- Chart.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.2.1/chart.umd.min.js"></script> 
+</head>
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="side-menu">
+      <li>
+        <a href="#" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text" onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <main>
+      <div class="head-title">
+        <div class="left">
+          <h1>Tableau de Bord</h1>
+          <ul class="liste">
+            <li>
+              <a href="#">Tableau de Bord</a>
+            </li>
+            <li><i class="fas fa-chevron-right"></i></li>
+            <li>
+              <a href="dashboard.html">Accueil</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <ul class="box-info">
+        <li>
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">
+            <h3 id="etudiants"></h3>
+            <p>Étudiants inscrits</p>
+          </span>
+        </li>
+        <li>
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">
+            <h3 id="professeurs"></h3>
+            <p>Professeurs</p>
+          </span>
+        </li>
+        <li>
+          <i class="fas fa-book-open"></i>
+          <span class="text">
+            <h3 id="cours"></h3>
+            <p>Cours disponibles</p>
+          </span>
+        </li>
+        <li>
+          <i class="fas fa-pen"></i>
+          <span class="text">
+            <h3 id="examens"></h3>
+            <p>Examens à venir</p>
+          </span>
+        </li>
+        <li>
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">
+            <h3 id="notes"></h3>
+            <p>Notes publiées</p>
+          </span>
+        </li>
+      </ul>
+    
+      </div>
+      <div class="canvas">
+        <div class="stat">
+          <h3 class="stats-title">Les statistiques de l'école </h3>
+          <br>
+          <canvas id="studentChart" width="200" height="100"></canvas>
+        </div>
+        <div class="stat">
+          <h3 class="stats-title">Répartition des Étudiants (Genre)</h3>
+          <br>
+          <canvas id="genderChart" width="90" height="60"></canvas>
+        </div> 
+        <div class="stat">
+          <h3 class="stats-title">Répartition des Étudiants (Classe)</h3>
+          <br>
+        <canvas id="classLineChart" width="400" height="200"></canvas>
+      </div> 
+      <div class="stat">
+        <h3 class="stats-title">Répartition des Professeurs (Matière)</h3>
+        <br>
+      <canvas id="professorChart" width="400" height="200"></canvas>
+    </div> 
+      </div>
+    </main>
+  </section>
+ <script src="script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      
+      let students = JSON.parse(localStorage.getItem('students')) || [];
+      let exams = JSON.parse(localStorage.getItem('exams')) || [];
+      let courses = JSON.parse(localStorage.getItem('courses')) || [];
+      let grades = JSON.parse(localStorage.getItem('grades')) || [];
+      let professors = JSON.parse(localStorage.getItem('professors')) || [];
+
+      document.getElementById('etudiants').textContent = students.length;
+      document.getElementById('professeurs').textContent = professors.length;
+      document.getElementById('cours').textContent = courses.length;
+      document.getElementById('examens').textContent = exams.length;
+      document.getElementById('notes').textContent = grades.length;
+   
+      const data = [
+        students.length,   
+        professors.length,  
+        courses.length,    
+        exams.length,      
+        grades.length      
+      ];
+
+      const ctx = document.getElementById('studentChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Étudiants', 'Professeurs', 'Cours', 'Examens', 'Notes'],
+          datasets: [{
+            data: data,
+            backgroundColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff'],
+            borderColor: ['#ff6384', '#36a2eb', '#ffce56', '#4bc0c0', '#9966ff'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true, 
+          plugins: {
+            legend: { display: false }, 
+          },
+          scales: {
+            x: { beginAtZero: true },
+            y: { beginAtZero: true }
+          }
+        }
+      });
+
+
+      console.log(localStorage.getItem('students'));
+
+      const maleStudents = students.filter(student => student.genre === 'Masculin').length;
+      const femaleStudents = students.filter(student => student.genre === 'Féminin').length;
+
+      console.log("Nombre de Masculins :", maleStudents);
+      console.log("Nombre de Féminins :", femaleStudents);
+
+      const genderData = [maleStudents, femaleStudents];
+      const genderLabels = ['Masculin', 'Féminin'];
+
+      const genderCtx = document.getElementById('genderChart').getContext('2d');
+      new Chart(genderCtx, {
+        type: 'pie',
+        data: {
+          labels: genderLabels,
+          datasets: [{
+            data: genderData,
+            backgroundColor: ['#36a2eb', '#ff6384']
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            tooltip: { enabled: true }
+          }
+        }
+      });
+
+    // Répartition des étudiants par classe
+  const students1Ap = students.filter(student => student.classe === "1Ap").length;
+  const students2Ap = students.filter(student => student.classe === "2Ap").length;
+  const students1Ing = students.filter(student => student.classe === "1Ing").length;
+  const students2Ing = students.filter(student => student.classe === "2Ing").length;
+  const students3Ing = students.filter(student => student.classe === "3Ing").length;
+
+  // Créer le graphique en ligne avec Chart.js
+  const classCtx = document.getElementById('classLineChart').getContext('2d');
+  new Chart(classCtx, {
+    type: 'line', // Type de graphique : ligne
+    data: {
+      labels: [
+        "1Ap",
+        "2Ap",
+        "1Ing",
+        "2Ing",
+        "3Ing"
+      ],
+      datasets: [{
+        label: 'Nombre d\'étudiants par classe',
+        data: [students1Ap, students2Ap, students1Ing, students2Ing, students3Ing],
+        borderColor: '#36a2eb',
+        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+        fill: true, // Remplir la surface sous la ligne
+        tension: 0.4, // Courbure de la ligne
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: { display: true },
+        tooltip: { enabled: true }
+      },
+      scales: {
+            x: { beginAtZero: true },
+            y: { beginAtZero: true }
+          }
+    }
+  });
+
+
+  const professorCountsBySubject = {}; // Objet pour stocker les comptes par matière
+
+// Parcours des professeurs et comptage par matière
+professors.forEach(professor => {
+  const subject = professor.subject; // Récupérer la matière du professeur
+
+  // Incrémenter le nombre de professeurs pour chaque matière
+  professorCountsBySubject[subject] = (professorCountsBySubject[subject] || 0) + 1;
+});
+
+// Extraire les labels (matières) et les données (comptes de professeurs)
+const labels = Object.keys(professorCountsBySubject);
+const dataProf = Object.values(professorCountsBySubject);
+
+// Créer le graphique avec Chart.js
+const Profctx = document.getElementById('professorChart').getContext('2d');
+      new Chart(Profctx, {
+        type: 'doughnut', // Type de graphique : doughnut
+        data: {
+          labels: labels, // Matières
+          datasets: [{
+            label: 'Nombre de Professeurs',
+            data: dataProf, // Comptage des professeurs
+            backgroundColor: ['#36a2eb', '#ff6384', '#4bc0c0', '#ffce56', '#9966ff'], // Couleurs des tranches
+            borderColor: '#fff', // Bordure blanche autour des tranches
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { display: true }, // Afficher la légende
+            tooltip: { enabled: true } // Activer les info-bulles au survol
+          }
+        }
+      });
+
+});
+  </script>
+</body>
+</html>

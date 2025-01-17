@@ -1,0 +1,176 @@
+<!-- Ajout Etudiant -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Étudiants</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text" onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <section id="content-etudiants">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Gestion des étudiants</h1>
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-etudiants.html">Liste des étudiants</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Formulaire pour ajouter un étudiant -->
+        <div class="form-container" id="add-student-form">
+          <form id="addStudentForm" onsubmit="addStudent(event)">
+
+            <!-- Nom -->
+            <label for="name">Nom:</label>
+            <input type="text" id="name" name="name" required>
+
+            <!-- Prénom -->
+            <label for="prenom">Prénom:</label>
+            <input type="text" id="prenom" name="prenom" required>
+
+            <!-- Date de naissance -->
+            <label for="date">Date de naissance:</label>
+            <input type="date" id="date" name="date" required>
+
+            <!-- Genre -->
+            <label for="genre">Genre:</label>
+            <select id="genre" name="genre" required>
+              <option value="Masculin">Masculin</option>
+              <option value="Féminin">Féminin</option>
+            </select>
+
+              <!-- Classe -->
+            <label for="classe">Classe :</label>
+            <select id="classe" name="classe" required>
+              <option value="1Ap">1ère Année Préparatoire</option>
+              <option value="2Ap">2ème Année Préparatoire</option>
+              <option value="1Ing">1ère Année Cycle Ingénieur</option>
+              <option value="2Ing">2ème Année Cycle Ingénieur</option>
+              <option value="3Ing">3ème Année Cycle Ingénieur</option>
+            </select>
+
+
+            <!-- Numéro de téléphone -->
+            <label for="phone">N° de Téléphone:</label>
+            <input type="text" id="phone" name="phone" pattern="[0-9]{10}" required>
+
+            <!-- Email -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <!-- Bouton de soumission -->
+            <button type="submit">Ajouter</button>
+          </form>
+        </div>
+      </main>
+    </section>
+    <script src="script.js"></script>
+    <script>
+      function addStudent(event) {
+        event.preventDefault(); // Empêche le rechargement de la page
+
+        // Récupération des valeurs des champs du formulaire
+        const name = document.getElementById('name').value;
+        const prenom = document.getElementById('prenom').value;
+        const date = document.getElementById('date').value;
+        const classe = document.getElementById('classe').value;
+        const genre = document.getElementById('genre').value;
+        const phone = document.getElementById('phone').value;
+        const email = document.getElementById('email').value;
+
+        // Récupération de la liste des étudiants dans le localStorage
+        let students = JSON.parse(localStorage.getItem('students')) || [];
+
+        // Création d'un nouvel objet de l' étudiant 
+        const newStudent = {
+          name,
+          prenom,
+          date,
+          genre,
+          classe,
+          phone,
+          email
+        };
+
+        // Ajout de l'étudiant dans le tableau
+        students.push(newStudent);
+
+        // Mise à jour du localStorage avec la liste d'étudiants
+        localStorage.setItem('students', JSON.stringify(students));
+
+        // Réinitialisation du formulaire
+        document.getElementById('addStudentForm').reset();
+
+        // Affichage d'un message de succès
+        alert("Étudiant ajouté avec succès !");
+        window.location.href = 'liste-etudiants.html';
+      }
+    </script>
+</body>
+
+</html>

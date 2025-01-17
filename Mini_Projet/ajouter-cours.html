@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestion des Cours</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+    
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text"  onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <section id="content-cours">
+      <main>
+        <div class="head-title">
+          <div class="container">
+            <h1>Gestion des cours</h1>
+            <ul class="liste">
+              <li><a class="active" href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-cours.html">Liste des Cours</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Formulaire pour ajouter un cours -->
+        <div class="form-container" id="add-course-form">
+          <form id="addCourseForm" onsubmit="addCourse(event)">
+            <!-- Titre du Cours -->
+            <label for="title">Titre:</label>
+            <input type="text" id="title" name="title" required>
+
+            <!-- Professeur -->
+            <label for="professor">Professeur:</label>
+            <select id="professor" name="professor" required>
+              <option value="">Sélectionner un professeur</option>
+              <!-- Options dynamiques -->
+            </select>
+
+            <!-- Durée du Cours -->
+            <label for="duration">Durée (heures) :</label>
+            <input type="number" id="duration" name="duration" min="1" required>
+
+            <!-- Planning -->
+            <label for="schedule">Planning (Date et Heure) :</label>
+            <input type="datetime-local" id="schedule" name="schedule" required>
+
+
+            <!-- Bouton de Soumission -->
+            <button type="submit">Ajouter</button>
+          </form>
+        </div>
+      </main>
+    </section>
+  </section>
+  <script src="script.js"></script>
+  <script>
+      // Fonction pour remplir la liste des professeurs
+      function populateProfessorDropdown() {
+        const professors = JSON.parse(localStorage.getItem('professors')) || [];
+        const select = document.getElementById('professor');
+        select.innerHTML = ''; // Vider les options actuelles
+    
+        professors.forEach((professor, index) => {
+          const option = document.createElement('option');
+          option.value = index; // Utiliser l'index du professeur
+          option.textContent = `${professor.name} ${professor.prenom}`;
+          select.appendChild(option);
+        });
+      }
+    
+      // Fonction pour ajouter un cours
+      function addCourse(event) {
+        event.preventDefault();
+    
+        // Récupération des valeurs des champs du formulaire
+        const title = document.getElementById('title').value;
+        const professorIndex = document.getElementById('professor').value; // Utilisation de l'index du professeur sélectionné
+        const duration = document.getElementById('duration').value;
+        const schedule = document.getElementById('schedule').value;
+    
+        // Récupération de la liste existante des cours dans le localStorage
+        let courses = JSON.parse(localStorage.getItem('courses')) || [];
+    
+         // Création d'un nouvel objet de cours
+        const newcourse = { 
+          title, 
+          professorIndex,
+          duration, 
+          schedule 
+        };
+
+        // Ajout de le cours dans le tableau
+        courses.push(newcourse);
+    
+        // Mise à jour du localStorage avec la nouvelle liste de cours
+        localStorage.setItem('courses', JSON.stringify(courses));
+    
+        // Réinitialisation du formulaire
+        document.getElementById('addCourseForm').reset();
+    
+        alert("Cours ajouté avec succès !");
+        window.location.href = 'liste-cours.html';
+      }
+      populateProfessorDropdown(); // Remplir la liste des professeurs quand la page se charge
+    </script>
+   
+</body>
+</html>

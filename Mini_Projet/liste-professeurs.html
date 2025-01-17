@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liste des Professeurs</title>
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+  <!-- Mon CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <section id="sidebar">
+    <a href="#" class="logo">
+      <i class="fas fa-school"></i>
+      <span class="text"> Scholarly</span>
+    </a>
+   
+    <ul class="side-menu top">
+      <li class="active">
+        <a href="dashboard.html">
+          <i class="fas fa-tachometer-alt"></i>
+          <span class="text">Tableau de Bord</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-etudiants.html">
+          <i class="fas fa-user-graduate"></i>
+          <span class="text">Étudiants</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-professeurs.html">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span class="text">Professeurs</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-cours.html">
+          <i class="fas fa-book-open"></i>
+          <span class="text">Cours</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-examens.html">
+          <i class="fas fa-pen"></i>
+          <span class="text">Examens</span>
+        </a>
+      </li>
+      <li>
+        <a href="liste-notes.html">
+          <i class="fas fa-graduation-cap"></i>
+          <span class="text">Notes</span>
+        </a>
+      </li>
+    </ul>
+    <ul class="side-menu">
+      <li>
+        <a href="login.html" class="logout">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="text"  onclick="logout()">Déconnexion</span>
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <section id="content">
+    <main>
+      <h1>Liste des professeurs</h1>
+      <section id="content-etudiants">
+        <div class="head-title">
+          <div class="container">
+            <ul class="liste">
+              <li><a href="dashboard.html">Accueil</a></li>
+              <li><i class="fas fa-chevron-right"></i></li>
+              <li><a href="liste-professeurs.html">Liste des professeurs</a></li>
+            </ul>
+          </div>
+          <div class="container-button ">
+            <button id="export-csv" class="export-button" onclick="exportToCSV() ">Exporter en CSV</button>
+            <button id="add-button" class="add-button" onclick="addProf()">Ajouter</button>
+        </div>
+        </div>
+      </section>
+      <br>
+
+      <form action="#">
+        <div class="form-input">
+          <input type="search" id="searchInput" placeholder="Rechercher..." oninput="searchProfessors()">
+          <button type="submit" class="search-btn"><i class="fas fa-search"></i></button><br>
+          <div class="sort-selector">
+            <select id="sortSelect" onchange="sortTable()">
+              <option value="">Trier par : </option>
+              <option value="name">Nom</option>
+              <option value="prenom">Prénom</option>
+              <option value="genre">Genre</option>
+              <option value="subject">Matière</option>
+              <option value="email">Email</option>
+              <option value="phone">N° de Téléphone</option>
+            </select>
+          </div>
+        </div>
+      </form>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Prénom</th>
+            <th>Date de naissance</th>
+            <th>Genre</th>
+            <th>Matière</th>
+            <th>N° de Téléphone</th>
+            <th>Email</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="professorTable">
+          <!-- Les professeurs seront ajoutés ici dynamiquement -->
+        </tbody>
+      </table>
+
+      <div id="pagination">
+        <button id="prevBtn" onclick="prevPage()">Précédent</button>
+        <span id="pageNumber">Page 1</span>
+        <button id="nextBtn" onclick="nextPage()">Suivant</button>
+      </div>
+    </main>
+  </section>
+  <script src="script.js"></script>
+  <script>
+    const professorsPerPage = 5; // Nombre de professeurs par page
+    let currentPage = 1;
+  
+    const professors = JSON.parse(localStorage.getItem('professors')) || [];
+  
+    let filteredProfessors = [...professors];
+
+    function addProf() {
+            window.location.href = 'ajouter-professeur.html';
+        }
+  
+    function renderProfessors() {
+      const professorTable = document.getElementById('professorTable');
+      professorTable.innerHTML = '';
+  
+      const start = (currentPage - 1) * professorsPerPage;
+      const end = start + professorsPerPage;
+      const currentProfessors = filteredProfessors.slice(start, end);
+  
+      currentProfessors.forEach((professor, index) => {
+          // Calculer l'index réel dans le tableau complet
+  const realIndex = start + index; 
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${professor.name}</td>
+          <td>${professor.prenom}</td>
+          <td>${professor.date}</td>
+          <td>${professor.genre}</td>
+          <td>${professor.subject}</td>
+          <td>${professor.phone}</td>
+          <td>${professor.email}</td>
+          <td>
+            <button onclick="window.location.href='modifier-professeur.html?id=${realIndex}'">Modifier</button>
+            <button onclick="deleteProfessor(${realIndex})">Supprimer</button>
+            <button onclick="window.location.href='voir-details-prof.html?id=${realIndex}'">Voir Détails</button>
+          </td>
+        `;
+        professorTable.appendChild(row);
+      });
+  
+      document.getElementById('pageNumber').innerText = `Page ${currentPage}`;
+      document.getElementById('prevBtn').disabled = currentPage === 1;
+      document.getElementById('nextBtn').disabled = currentPage * professorsPerPage >= filteredProfessors.length;
+    }
+  
+    function nextPage() {
+      currentPage++;
+      renderProfessors();
+    }
+  
+    function prevPage() {
+      currentPage--;
+      renderProfessors();
+    }
+  
+    function sortTable() {
+      const sortBy = document.getElementById("sortSelect").value; // Récupère la valeur sélectionnée dans le select
+      filteredProfessors.sort((a, b) => {
+        if (a[sortBy] < b[sortBy]) return -1;
+        if (a[sortBy] > b[sortBy]) return 1;
+        return 0;
+      });
+      renderProfessors(); // Re-render les professeurs après le tri
+    }
+  
+    function searchProfessors() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      filteredProfessors = professors.filter(professor =>
+        professor.name.toLowerCase().includes(query) ||
+        professor.prenom.toLowerCase().includes(query) ||
+        professor.date.toLowerCase().includes(query) ||
+        professor.genre.toLowerCase().includes(query) ||
+        professor.subject.toLowerCase().includes(query)
+      );
+      renderProfessors();
+    }
+  
+    function deleteProfessor(index) {
+      // Supprimer le professeur par son index
+      professors.splice(index, 1);
+  
+      // Mettre à jour le localStorage avec la nouvelle liste de professeurs
+      localStorage.setItem('professors', JSON.stringify(professors));
+  
+      // Réinitialiser la liste filtrée et réafficher
+      filteredProfessors = [...professors];
+      renderProfessors();
+  
+      // Afficher un message de confirmation
+      alert("Professeur supprimé avec succès !");
+    }
+  
+    // Fonction pour exporter les professeurs en CSV
+    function exportToCSV () {
+      let csvContent = "Nom,Prénom,Matière,Email,Téléphone\n";
+  
+      professors.forEach(professor => {
+        csvContent += `${professor.name},${professor.prenom},${professor.date},${professor.genre},${professor.subject},${professor.email},${professor.phone}\n`;
+      });
+  
+      // Créer un lien de téléchargement
+      const link = document.createElement('a');
+      link.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csvContent);
+      link.download = 'professors.csv';
+      link.click();
+    }
+
+    renderProfessors();
+  </script>
+  
+</body>
+</html>

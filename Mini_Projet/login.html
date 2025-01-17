@@ -1,0 +1,212 @@
+<!-- Login -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentification</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa, #e4e8f0); /* Fond gris clair */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .form-container {
+            background: white;
+            width: 320px;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(147, 165, 195, 0.2); /* Ombre grise-bleue */
+            transform: translateY(0);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(147, 165, 195, 0.3);
+        }
+
+        h2 {
+            text-align: center;
+            color: #4a5568; /* Gris foncé */
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+        }
+
+        hr {
+            border: none;
+            height: 2px;
+            background: linear-gradient(to right, #a3bffa, #7f9cf5); /* Dégradé bleu clair */
+            margin-bottom: 15px;
+            border-radius: 1px;
+            opacity: 0.5;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        label {
+            color: #718096; /* Gris moyen */
+            font-size: 0.85rem;
+            margin-bottom: 4px;
+            display: block;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0; /* Gris clair */
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .input-with-icon input {
+            padding-left: 35px;
+        }
+
+        .input-with-icon input:focus + i {
+            color: #63b3ed; /* Bleu clair au focus */
+        }
+
+        input {
+            width: 100%;
+            padding: 8px 12px;
+            margin: 4px 0;
+            border: 2px solid #e2e8f0; /* Gris très clair */
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #4a5568; /* Gris foncé */
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f8fafc; /* Gris très très clair */
+        }
+
+        input:focus {
+            border-color: #63b3ed; /* Bleu clair */
+            box-shadow: 0 0 0 3px rgba(99, 179, 237, 0.1);
+            background: white;
+        }
+
+        input::placeholder {
+            color: #cbd5e0; /* Gris clair */
+            font-size: 0.85rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(135deg, #63b3ed, #4299e1); /* Dégradé bleu clair */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(66, 153, 225, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #4299e1, #63b3ed);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(66, 153, 225, 0.25);
+        }
+
+        button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(66, 153, 225, 0.2);
+        }
+
+        #message {
+            text-align: center;
+            color: #718096; /* Gris moyen */
+            font-size: 0.8rem;
+            margin-top: 12px;
+            font-weight: 500;
+        }
+
+        /* Responsiveness */
+        @media screen and (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .form-container {
+                width: 280px;
+                padding: 20px 15px;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Authentification</h2>
+        <hr>
+        <form id="login-form">
+            <div class="form-group">
+                <label for="username">Nom d'utilisateur</label>
+                <div class="input-with-icon">
+                    <input type="text" id="username" name="username" placeholder="Entrez votre nom d'utilisateur" required>
+                    <i class="fas fa-user"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Adresse Email</label>
+                <div class="input-with-icon">
+                    <input type="email" id="email" name="email" placeholder="Entrez votre adresse email" required>
+                    <i class="fas fa-envelope"></i>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Mot de passe</label>
+                <div class="input-with-icon">
+                    <input type="password" id="password" name="password" placeholder="Entrez votre mot de passe" required>
+                    <i class="fas fa-lock"></i>
+                </div>
+            </div>
+
+            <button type="submit" onclick="loginForm(event)">
+                <i class="fas fa-sign-in-alt"></i>
+                Se connecter
+            </button>
+        </form>
+        <p id="message"></p>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
