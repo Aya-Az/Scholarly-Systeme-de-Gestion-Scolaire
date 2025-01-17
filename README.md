@@ -91,20 +91,6 @@ Pagination des résultats
 - LocalStorage pour le stockage des données
 - etc..
 
-##  Structure des Pages
-
-├── dashboard.html          # Tableau de bord principal
-├── liste-etudiants.html   # Liste et gestion des étudiants
-├── liste-professeurs.html   # Liste et gestion des professeurs 
-├── ajouter-etudiant.html  # Formulaire d'ajout d'étudiant
-├── modifier-etudiant.html # Modification des informations étudiant
-├── liste-professeurs.html # Liste et gestion des professeurs
-├── liste-cours.html       # Gestion des cours
-├── liste-examens.html     # Organisation des examens
-├── liste-notes.html       # Gestion des notes
-└── login.html             # Page de connexion
-..........etc
-
 
 ##  Sécurité
 - Système d'authentification pour l'accès au backoffice
