@@ -99,10 +99,7 @@ Génération de PDF pour les dossiers individuels
 ##  Fonctionnalités à Venir
 - [ ] Intégration d'une base de données
 - [ ] Système de notifications
-- [ ] Génération de rapports PDF
-- [ ] Interface mobile responsive
 - [ ] Module de messagerie interne
-- [ ] Tableau de bord analytique
 - [ ] Système de gestion des absences
 - [ ] Module de gestion des emplois du temps
 
